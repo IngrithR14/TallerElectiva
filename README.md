@@ -1,2 +1,2 @@
 # TallerElectiva
-Integrantes :Ingrith Rodriguez y Camilo castañeda
+Integrantes :Ingrith Rodriguez y Camilo Castañeda
