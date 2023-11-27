@@ -1,0 +1,24 @@
+{
+  "name": "proyecto-ejs-electiva-2",
+  "version": "1.0.0",
+  "description": "Manejo de Finanzas Personales",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "watch": "nodemon --ext *"
+  },
+  "author": "Camilo Castañeda e Ingrid Rodriguez",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "moment-timezone": "^0.5.43",
+    "reload": "^3.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

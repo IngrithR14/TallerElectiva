@@ -1,0 +1,6 @@
+{
+  "ext": "js,json,ejs",
+  "execMap": {
+    "js": "node --inspect"
+  }
+}

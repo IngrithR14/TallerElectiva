@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <%- include('../componentes/head'); %>
+  </head>
+  <body class="flex flex-col h-screen bg-gray-50">
+    <header><%- include('../componentes/header'); %></header>
+
+    <div class="flex flex-col items-center justify-center flex-1 space-y-5">
+      <div
+        id="totalDisplay"
+        class="w-4/5 max-w-lg p-8 mt-10 bg-white rounded shadow-lg text-center text-xl font-bold"
+      >
+        Total: $<span id="totalAmount">0.00</span>
+      </div>
+      <!-- Formulario de gestión de presupuesto -->
+      <form id="budgetForm" class="w-4/5 max-w-lg p-8 mt-10 bg-white rounded shadow-lg">
+        <div class="mb-4">
+          <label class="block mb-2 text-sm font-bold text-gray-700" for="type">
+            Tipo de Registro:
+          </label>
+          <select
+            id="type"
+            class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+          >
+            <option value="income">Ingreso</option>
+            <option value="expense">Gasto</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label class="block mb-2 text-sm font-bold text-gray-700" for="description">
+            Descripción:
+          </label>
+          <input
+            id="description"
+            type="text"
+            class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            required
+          />
+        </div>
+        <div class="mb-6">
+          <label class="block mb-2 text-sm font-bold text-gray-700" for="amount"> Cantidad: </label>
+          <input
+            id="amount"
+            type="number"
+            class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+            required
+          />
+        </div>
+        <div class="flex items-center justify-center">
+          <button class="px-4 py-2 font-bold text-white bg-blue-500 
+                      rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline" type="submit">
+            Agregar Registro
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="text-center text-lg font-bold pb-4 pt-4 lg:pt-0 lg:pb-4">Lista de registros</div>
+    <!-- Lista de registros -->
+    <div id="recordsList" class="w-4/5 px-8 py-4 mx-auto bg-white rounded shadow-lg">
+      <% registros.forEach(function(registro) { %>
+      <div
+        class="flex flex-col space-y-1 py-2 border-b border-black-500 justify-between lg:flex-row lg:space-y-0"
+      >
+        <span class="lg:w-1/3 lg:ml-4"><%= registro.date %></span>
+        <span class="lg:w-1/3 lg:text-center lg:ml-0"
+          ><%= registro.type === 'income' ? '+' : '-' %><%= registro.amount %></span
+        >
+        <span class="lg:w-1/3 lg:text-right lg:ml-4"><%= registro.description %></span>
+      </div>
+      <% }); %>
+    </div>
+
+    <footer><%- include('../componentes/footer'); %></footer>
+
+    <script>
+      document.getElementById("budgetForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        // Obtener los valores del formulario
+        const data = {
+          type: document.getElementById("type").value,
+          description: document.getElementById("description").value,
+          amount: document.getElementById("amount").value,
+          date: new Date().toISOString(),
+        };
+        // Enviar los datos al servidor
+        fetch("/agregarRegistro", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.text())
+          .then((message) => {
+            addRecordToList(data);
+          });
+
+        // Limpiar el formulario
+        this.reset();
+
+        // Actualizar el total
+        updateTotal(data.type, parseFloat(data.amount));
+      });
+
+      function addRecordToList(record) {
+        const list = document.getElementById("recordsList");
+        const item = document.createElement("div");
+        item.classList.add("py-2", "border-b", "border-gray-200", "flex", "justify-between");
+        item.innerHTML = `
+        <span>${record.date}</span>
+        <span>${record.type === "income" ? "+" : "-"}${record.amount}</span>
+        <span>${record.description}</span>
+      `;
+        list.prepend(item);
+      }
+
+      function updateTotal(type, amount) {
+        var currentTotal = parseFloat(document.getElementById("totalAmount").innerText);
+        var newTotal = type === "income" ? currentTotal + amount : currentTotal - amount;
+        document.getElementById("totalAmount").innerText = newTotal.toFixed(2);
+      }
+
+      // Inicializar el total al cargar la página
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("totalAmount").innerText = "<%= total %>";
+      });
+    </script>
+
+    <script src="/reload/reload.js"></script>
+  </body>
+</html>
